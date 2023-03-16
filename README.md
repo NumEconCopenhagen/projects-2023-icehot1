@@ -1,4 +1,4 @@
-# \[Group name\]
+# \[icehot1\]
 
 **Group members:**
 - Viktoria 
