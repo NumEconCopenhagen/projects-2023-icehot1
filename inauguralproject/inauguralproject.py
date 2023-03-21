@@ -54,12 +54,12 @@ class HouseholdSpecializationModelClass:
         C = par.wM*LM + par.wF*LF
 
         # b. home production
-        if sigma == 0:
+        if par.sigma == 0:
             H = min(HM, HF)
-        elif sigma == 1:
+        elif par.sigma == 1:
             H = HM**(1-par.alpha) * HF**par.alpha
         else:
-            H = ((1-par.alpha) * HM**((sigma-1)/sigma) + par.alpha * HF**((sigma-1)/sigma))**((sigma-1)/sigma)
+            H = ((1-par.alpha) * HM**((par.sigma-1)/par.sigma) + par.alpha * HF**((par.sigma-1)/par.sigma))**((par.sigma-1)/par.sigma)
 
         # c. total consumption utility
         Q = C**par.omega*H**(1-par.omega)
