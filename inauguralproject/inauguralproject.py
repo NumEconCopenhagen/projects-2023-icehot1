@@ -3,6 +3,7 @@ from types import SimpleNamespace
 
 import numpy as np
 from scipy import optimize
+from scipy import interpolate
 
 import pandas as pd 
 import matplotlib.pyplot as plt
@@ -111,15 +112,56 @@ class HouseholdSpecializationModelClass:
 
         return opt
 
-    def solve(self,do_print=False):
+    def solve_continuously(self, do_print=False):
         """ solve model continously """
+        par = self.par
+        sol = self.sol
+        opt = SimpleNamespace()
 
-        pass    
+        def objective(x):
+            LM, HM, LF, HF = x
+            return - self.calc_utility(LM, HM, LF, HF)
+        
+        def constraint(x):
+            LM, HM, LF, HF = x
+            return np.array([24-LM-HM, 24-LF-HF])
+        
+        #set bounds
+        bounds = [(0, 24), (0, 24), (0, 24), (0, 24)]
 
-    def solve_wF_vec(self,discrete=False):
-        """ solve model for vector of female wages """
+        # solve optimization problem
+        res = optimize.minimize(
+            objective, x0=[12, 12, 12, 12], method="SLSQP", bounds=bounds, constraints={"fun": constraint, "type": "ineq"}
+        )
 
-        pass
+        opt.LM, opt.HM, opt.LF, opt.HF = res.x
+
+        # print results
+        if do_print:
+            for k, v in opt.__dict__.items():
+                print(f"{k} = {v:6.4f}")
+
+        return opt
+
+
+    def solve_wF_vec(self, discrete=False):
+        """ Solve model for vector of female wages
+        If discrete=True, returns the discrete values of wF (useful for simulations)
+        Otherwise, returns the interpolated values of wF (useful for plotting)
+        """
+        if self.solution is None:
+            self.solve()
+
+        if not discrete:
+            # Use interpolation to get continuous values of wF
+            wF_vals = np.linspace(self.wage_min, self.wage_max, num=self.n_interp)
+            wF_interp = interpolate.interp1d(self.wF_vec, self.wage_grid, kind='linear', fill_value='extrapolate')
+            wF = wF_interp(wF_vals)
+        else:
+            # Return the discrete values of wF
+            wF = self.wF_vec
+
+        return wF
 
     def run_regression(self):
         """ run regression """
