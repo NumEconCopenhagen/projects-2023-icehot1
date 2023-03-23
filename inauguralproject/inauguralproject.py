@@ -114,6 +114,7 @@ class HouseholdSpecializationModelClass:
 
     def solve_continuously(self, do_print=False):
         """ solve model continously """
+        
         par = self.par
         sol = self.sol
         opt = SimpleNamespace()
@@ -145,23 +146,42 @@ class HouseholdSpecializationModelClass:
 
 
     def solve_wF_vec(self, discrete=False):
-        """ Solve model for vector of female wages
-        If discrete=True, returns the discrete values of wF (useful for simulations)
-        Otherwise, returns the interpolated values of wF (useful for plotting)
-        """
-        if self.solution is None:
-            self.solve()
+        """ Solve model for vector of female wages"""
+#If discrete=True, returns the discrete values of wF (useful for simulations)
+#Otherwise, returns the interpolated values of wF (useful for plotting)
+    
+        par = self.par
+        sol = self.sol
 
-        if not discrete:
-            # Use interpolation to get continuous values of wF
-            wF_vals = np.linspace(self.wage_min, self.wage_max, num=self.n_interp)
-            wF_interp = interpolate.interp1d(self.wF_vec, self.wage_grid, kind='linear', fill_value='extrapolate')
-            wF = wF_interp(wF_vals)
-        else:
-            # Return the discrete values of wF
-            wF = self.wF_vec
+        for it, w in enumerate(par.wF_vec):
+            par.wF = w
+            if discrete == True:
+                res = self.solve_discrete()
+            else:
+                res = self.solve_continuously()
+            
+            sol.LM_vec[it] = res.LM
+            sol.LF_vec[it] = res.LF
+            sol.HM_vec[it] = res.HM
+            sol.HF_vec[it] = res.HF
 
-        return wF
+            return wF
+
+
+
+        #if self.solution is None:
+        #    self.solve()
+        #
+        #if not discrete:
+        #    # Use interpolation to get continuous values of wF
+        #    wF_vals = np.linspace(self.wage_min, self.wage_max, num=self.n_interp)
+        #    wF_interp = interpolate.interp1d(self.wF_vec, self.wage_grid, kind='linear', fill_value='extrapolate')
+        #    wF = wF_interp(wF_vals)
+        #else:
+        #    # Return the discrete values of wF
+        #    wF = self.wF_vec
+        #
+        #return wF
 
     def run_regression(self):
         """ run regression """
