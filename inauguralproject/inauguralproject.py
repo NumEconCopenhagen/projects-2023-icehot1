@@ -147,26 +147,20 @@ class HouseholdSpecializationModelClass:
 
     def solve_wF_vec(self, discrete=False):
         """ Solve model for vector of female wages"""
-#If discrete=True, returns the discrete values of wF (useful for simulations)
-#Otherwise, returns the interpolated values of wF (useful for plotting)
-    
+
         par = self.par
         sol = self.sol
 
-        for it, w in enumerate(par.wF_vec):
-            par.wF = w
+        for it, val in enumerate(par.wF_vec):
+            par.wF = val
             if discrete == True:
                 res = self.solve_discrete()
             else:
                 res = self.solve_continuously()
-            
             sol.LM_vec[it] = res.LM
             sol.LF_vec[it] = res.LF
             sol.HM_vec[it] = res.HM
             sol.HF_vec[it] = res.HF
-
-            return wF
-
 
 
         #if self.solution is None:
