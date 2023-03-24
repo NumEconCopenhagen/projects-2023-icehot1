@@ -123,19 +123,24 @@ class HouseholdSpecializationModelClass:
             LM, HM, LF, HF = x
             return - self.calc_utility(LM, HM, LF, HF)
         
-        def constraint(x):
-            LM, HM, LF, HF = x
-            return np.array([24-LM-HM, 24-LF-HF])
+        #Define the constraints
+        const = [{'type': 'ineq', 'fun': lambda x: 24-x[0] -x[1]}, 
+                 {'type': 'ineq', 'fun': lambda x: 24-x[2] -x[3]}]
         
         #set bounds
         bounds = [(0, 24), (0, 24), (0, 24), (0, 24)]
+        
+        
+        #Use the something
+        res = optimize.minimize(objective, x0=[12, 12, 12, 12], method="SLSQP", bounds=bounds, constraints=const)
+        res = optimize.minimize(objective, x0=[12, 12, 12, 12], method="Nelder-Mead", bounds=bounds, constraints=const)
 
-        # solve optimization problem
-        res = optimize.minimize(
-            objective, x0=[12, 12, 12, 12], method="SLSQP", bounds=bounds, constraints={"fun": constraint, "type": "ineq"}
-        )
-
-        opt.LM, opt.HM, opt.LF, opt.HF = res.x
+        #Set the optimal values
+        opt.LM = res.x[0]
+        opt.HM = res.x[1]
+        opt.LF = res.x[2]
+        opt.HF = res.x[3]
+        
 
         # print results
         if do_print:
@@ -143,7 +148,6 @@ class HouseholdSpecializationModelClass:
                 print(f"{k} = {v:6.4f}")
 
         return opt
-
 
     def solve_wF_vec(self, discrete=False):
         """ Solve model for vector of female wages"""
@@ -163,20 +167,6 @@ class HouseholdSpecializationModelClass:
             sol.HF_vec[it] = res.HF
 
 
-        #if self.solution is None:
-        #    self.solve()
-        #
-        #if not discrete:
-        #    # Use interpolation to get continuous values of wF
-        #    wF_vals = np.linspace(self.wage_min, self.wage_max, num=self.n_interp)
-        #    wF_interp = interpolate.interp1d(self.wF_vec, self.wage_grid, kind='linear', fill_value='extrapolate')
-        #    wF = wF_interp(wF_vals)
-        #else:
-        #    # Return the discrete values of wF
-        #    wF = self.wF_vec
-        #
-        #return wF
-
     def run_regression(self):
         """ run regression """
 
@@ -192,3 +182,4 @@ class HouseholdSpecializationModelClass:
         """ estimate alpha and sigma """
 
         pass
+
