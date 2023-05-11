@@ -21,8 +21,9 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
 
     # Steady-state values
     k_ss = (alpha / (rho + theta * g))**(1 / (1 - alpha))
-    G_ss = k_ss**alpha - (n + g) * k_ss  # Initialize G_ss
+    G_ss = k_ss**alpha - (n + g) * k_ss - c_ss
     c_ss = k_ss**alpha - G_ss - (n + g) * k_ss
+
 
     # Initialize variables
     k = np.zeros(T + 1)
@@ -98,5 +99,5 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
 
         plt.show()
 
-    return k, y, c, r, w, dy
+    return k, y, c, r, w
 
