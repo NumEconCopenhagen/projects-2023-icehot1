@@ -96,5 +96,4 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
 
         plt.show()
 
-    return k, y, c, r, w
-
+    return k, c, r, w, y, dy
