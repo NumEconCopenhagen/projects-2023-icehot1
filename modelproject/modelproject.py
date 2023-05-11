@@ -11,7 +11,6 @@ def euler_equation(c_k, params):
 
     return eq1, eq2
 
-
 def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
     # Parameters
     alpha = 0.3
@@ -21,9 +20,8 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
 
     # Steady-state values
     k_ss = (alpha / (rho + theta * g))**(1 / (1 - alpha))
-    G_ss = k_ss**alpha - (n + g) * k_ss - c_ss
+    G_ss = k_ss**alpha - (n + g) * k_ss
     c_ss = k_ss**alpha - G_ss - (n + g) * k_ss
-
 
     # Initialize variables
     k = np.zeros(T + 1)
@@ -32,7 +30,7 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
     w = np.zeros(T)
     y = np.zeros(T)
     dy = np.zeros(T)
-    G = np.zeros(T) + G_ss  # Initialize all values with G_ss
+    G = np.zeros(T) + G_ss
 
     k[0] = k_ss
 
@@ -56,7 +54,6 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
 
         if t > 0:
             dy[t] = (y[t] - y[t - 1]) / y[t - 1] + g
-
     # Plot results
     if plot:
         time = np.arange(T)
