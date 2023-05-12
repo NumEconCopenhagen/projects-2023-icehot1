@@ -96,7 +96,7 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
         plt.ylabel("dy")
 
         plt.show()
-        
+
     # Calculate the equilibrium values
     k_eq = k_ss
     c_eq = c_ss
@@ -104,6 +104,8 @@ def ramsey_model_simulation(T=200, rho=0.1, G_shock=None, plot=True):
     w_eq = (1 - alpha) * k_eq**alpha
     y_eq = k_eq**alpha
     dy_eq = (y_eq - y[-1]) / y[-1] + g
+
+
 
     # Return the equilibrium values as well
     return k, c, r, w, y, dy, k_eq, c_eq, r_eq, w_eq, y_eq, dy_eq
