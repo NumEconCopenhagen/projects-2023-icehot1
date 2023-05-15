@@ -1,4 +1,3 @@
-
 from types import SimpleNamespace
 
 import numpy as np
@@ -55,6 +54,7 @@ class HouseholdSpecializationModelClass:
         C = par.wM*LM + par.wF*LF
 
         # b. home production
+        H = None
         if par.sigma == 0:
             H = min(HM, HF)
         elif par.sigma == 1:
@@ -166,7 +166,6 @@ class HouseholdSpecializationModelClass:
             sol.HM_vec[it] = res.HM
             sol.HF_vec[it] = res.HF
 
-
     def run_regression(self):
         """ run regression """
 
@@ -178,8 +177,20 @@ class HouseholdSpecializationModelClass:
         A = np.vstack([np.ones(x.size),x]).T
         sol.beta0,sol.beta1 = np.linalg.lstsq(A,y,rcond=None)[0]
     
-    def estimate(self,alpha=None,sigma=None):
+    def estimate(self, alpha=None):
         """ estimate alpha and sigma """
+        par = self.par
+        sol = self.sol
 
-        pass
+        def objective_function(x):
+            par.alpha, par.sigma = x
+            self.solve_wF_vec()
+            self.run_regression()
+            return (par.beta0_target - sol.beta0) ** 2 + (par.beta1_target - sol.beta1) ** 2
 
+        if alpha is None:    
+            bounds = [(0,1), (0,1)]
+            initial_guess = [0.9, 0.1]
+            result = optimize.minimize(objective_function, initial_guess, method='Nelder-Mead', bounds=bounds, tol=1e-10)
+            
+        return result
