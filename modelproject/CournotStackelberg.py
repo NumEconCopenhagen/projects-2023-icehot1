@@ -71,7 +71,7 @@ class CournotDuopoly():
         q1opt, q2opt = res
         print('Cournot Nash Equilibrium - Optimal quantity produced for both firms:\n')
         print(f'Quantity for firm1: q1= {q1opt:.8f}\nQuantity for firm2: q2= {q2opt:.8f}' )
-        return res
+        
     
     # three plots for the results shown in the ipynb file 
     
