@@ -10,6 +10,9 @@ import scipy as sc
 from scipy import optimize
 import matplotlib.pyplot as plt
 from scipy.optimize import fsolve 
+import ipywidgets as widgets
+from ipywidgets import interact
+
 
 class CournotDuopoly(): 
 
