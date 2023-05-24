@@ -8,7 +8,8 @@ The **code** for the regression can be seen from the py-file [inauguralproject.p
 We apply the **following datasets**:
 
 1. Neighborhood Characteristics by Coounty.csv (*https://opportunityinsights.org/data/*) 
-1. intergenerational mobility county copy (*https://opportunityinsights.org/data/*)
+2. intergenerational mobility county copy.csv (*https://opportunityinsights.org/data/*)
+3. cb_2018_us_county_500k.zip (*https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html*)
 
 **Dependencies:** Apart from a standard Anaconda Python 3 installation, the project requires the following installations:
 
