@@ -27,9 +27,9 @@ def run_regression(dfs, categories, columns, independent_vars):
             coef = result.params['share_black2000']
             pvalue = result.pvalues['share_black2000']
             if pvalue < 0.05:
-                coef_str = str(coef) + '*'
+                coef_str = "{:.4f}*".format(coef)
             else:
-                coef_str = str(coef)
+                coef_str = "{:.4f}".format(coef)
 
             # Append the coefficient of share_black2000 to the list
             results.append([category, column, coef_str])
