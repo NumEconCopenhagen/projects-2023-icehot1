@@ -141,7 +141,6 @@ class HouseholdSpecializationModelClass:
         opt.HM = res.x[1]
         opt.LF = res.x[2]
         opt.HF = res.x[3]
-        
 
         # print results
         if do_print:
@@ -191,8 +190,8 @@ class HouseholdSpecializationModelClass:
             return (par.beta0_target - sol.beta0) ** 2 + (par.beta1_target - sol.beta1) ** 2
 
         if alpha is None:    
-            bounds = [(0,1), (0,1)]
-            initial_guess = [0.9, 0.1]
-            result = optimize.minimize(objective_function, initial_guess, method='Nelder-Mead', bounds=bounds, tol=1e-10)
+            bounds = [(0.0,1.), (0.0,1.)]
+            initial_guess = [0.5, 0.5]
+            result = optimize.minimize(objective_function, initial_guess, method='Nelder-Mead', bounds=bounds)
             return result
         
