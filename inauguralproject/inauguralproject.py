@@ -6,6 +6,7 @@ from scipy import interpolate
 
 import pandas as pd 
 import matplotlib.pyplot as plt
+import warnings
 
 class HouseholdSpecializationModelClass:
 
@@ -60,7 +61,7 @@ class HouseholdSpecializationModelClass:
         elif par.sigma == 1:
             H = HM**(1-par.alpha) * HF**par.alpha
         else:
-            H = ((1-par.alpha) * HM**((par.sigma-1)/par.sigma) + par.alpha * HF**((par.sigma-1)/par.sigma))**((par.sigma-1)/par.sigma)
+            H = ((1-par.alpha)*HM**((par.sigma-1)/par.sigma)+par.alpha * HF**((par.sigma-1)/par.sigma))**((par.sigma-1)/par.sigma)
 
         # c. total consumption utility
         Q = C**par.omega*H**(1-par.omega)
@@ -156,6 +157,7 @@ class HouseholdSpecializationModelClass:
         sol = self.sol
 
         for it, val in enumerate(par.wF_vec):
+            
             par.wF = val
             if discrete == True:
                 res = self.solve_discrete()
@@ -192,5 +194,5 @@ class HouseholdSpecializationModelClass:
             bounds = [(0,1), (0,1)]
             initial_guess = [0.9, 0.1]
             result = optimize.minimize(objective_function, initial_guess, method='Nelder-Mead', bounds=bounds, tol=1e-10)
-            
-        return result
+            return result
+        

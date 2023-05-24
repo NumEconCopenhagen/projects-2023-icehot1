@@ -123,7 +123,6 @@ class CournotDuopoly():
             plt.show()
 
 
-
     def plot_mc_changes_both_firms(self, mc1, mc2, a):
         # Initialize the parameters
         mc1 = mc1
