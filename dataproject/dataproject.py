@@ -1,90 +1,41 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.optimize import fsolve
+# my_functions.py
+import pandas as pd
+import statsmodels.api as sm
 
-def euler_equation(c_k, params):
-    c, k = c_k
-    alpha, rho, theta, g, n, G, k_lag = params
+def run_regression(dfs, categories, columns, independent_vars):
+    # List to hold the results
+    results = []
 
-    eq1 = c - ((alpha*k_lag**(alpha-1) - rho - theta*g)/theta) * c
-    eq2 = k - (k_lag**alpha - c - G - (n+g)*k_lag)
+    # Calculate stats for each category
+    for category in categories:
+        for column in columns:
+            # Define dependent and independent variables
+            X = dfs[category][independent_vars]
+            y = dfs[category][column]
 
-    return eq1, eq2
+            # Add state fixed effects
+            X = pd.concat([X, pd.get_dummies(dfs[category]['State'], drop_first=True)], axis=1)
 
-def ramsey_model_simulation(T=100, rho=0.03, G_multiplier=1, G_increase_duration=1, plot=True):
-    # Parameters
-    alpha = 1/3
-    theta = 1
-    g = 0.02
-    n = 0.01
+            # Add constant to independent variables
+            X = sm.add_constant(X)
 
-    # Steady-state values
-    k_ss = (alpha / (rho + theta * g))**(1 / (1 - alpha))
-    y_ss = k_ss**alpha
-    G_ss = 0.5 * y_ss  # 50% of the initial steady-state GDP
-    c_ss = y_ss - G_ss - (n + g) * k_ss
+            # Create OLS regression model
+            model = sm.OLS(y, X, missing='drop')
+            result = model.fit()
 
-    # Initialize variables
-    k = np.zeros(T + 1)
-    c = np.zeros(T)
-    r = np.zeros(T)
-    w = np.zeros(T)
-    y = np.zeros(T)
-    G = np.zeros(T)
+            # Check if the share_black2000 coefficient is statistically significant
+            coef = result.params['share_black2000']
+            pvalue = result.pvalues['share_black2000']
+            if pvalue < 0.05:
+                coef_str = "{:.4f}*".format(coef)
+            else:
+                coef_str = "{:.4f}".format(coef)
 
-    k[0] = k_ss
+            # Append the coefficient of share_black2000 to the list
+            results.append([category, column, coef_str])
 
-    # Generate G path
-    G[:G_increase_duration] = G_ss * G_multiplier
-    G[G_increase_duration:] = G_ss
+    # Create a DataFrame from the results
+    df_results = pd.DataFrame(results, columns=['Category', 'Variable', 'Coefficient'])
 
-    # Model simulation
-    for t in range(T):
-        params = (alpha, rho, theta, g, n, G[t], k[t])
-        initial_guess = (c_ss, k_ss)
-        c_t, k_t1 = fsolve(euler_equation, initial_guess, args=(params,))
-
-        c[t] = c_t
-        k[t + 1] = k_t1
-
-        r[t] = alpha * k[t]**(alpha - 1)
-        w[t] = (1 - alpha) * k[t]**alpha
-        y[t] = k[t]**alpha
-
-    # Plot results
-    if plot:
-        time = np.arange(T)
-
-        plt.figure()
-        plt.plot(time, k[1:])
-        plt.title("Capital Stock")
-        plt.xlabel("Time")
-        plt.ylabel("k")
-
-        plt.figure()
-        plt.plot(time, y)
-        plt.title("Output")
-        plt.xlabel("Time")
-        plt.ylabel("y")
-
-        plt.figure()
-        plt.plot(time, c)
-        plt.title("Consumption")
-        plt.xlabel("Time")
-        plt.ylabel("c")
-
-        plt.figure()
-        plt.plot(time, r)
-        plt.title("Interest Rate")
-        plt.xlabel("Time")
-        plt.ylabel("r")
-
-        plt.figure()
-        plt.plot(time, w)
-        plt.title("Wage")
-        plt.xlabel("Time")
-        plt.ylabel("w")
-
-        plt.show()
-
-    return k, y, c, r, w
+    # Print the DataFrame
+    print(df_results)
