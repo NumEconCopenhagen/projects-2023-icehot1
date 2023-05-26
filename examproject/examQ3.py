@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import time
 
 def refined_global_optimizer(func, num_parameters, bounds, tol, K_warmup, K_max):
+    
     best_x = None 
     best_f = None
     initial_guesses = []
@@ -56,4 +57,5 @@ def run_optimization_and_measure_time(func, num_parameters, bounds, tol, K_warmu
     print(f"Function value at best solution: {best_f}")
 
     return best_x, best_f, execution_time
+
 
