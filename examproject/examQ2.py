@@ -4,10 +4,11 @@ from scipy import optimize
 from scipy import interpolate
 
 class SalonModel():
-
+    """ The model for analyzing the profitability of a hair salon business. """
+        
     def __init__(self):
         """ setup model """
-
+ 
         np.random.seed(123)
 
         # a. create namespaces
@@ -28,24 +29,12 @@ class SalonModel():
         sol.kappa = np.zeros((par.K, 120))
         sol.labor = np.zeros((par.K, 120))
 
-
     def profit(self, l, kappa):
         """ calculate profit """
         par = self.par
         if l < 0:
             return np.nan
         return kappa * l**(1 - par.eta) - par.w * l
-
-
-    # def profit(self, l, kappa):
-    #     """ calculate profit """
-    #     par = self.par
-    #     return kappa * l**(1 - par.eta) - par.w * l
-
-    # def optimal_labor(self, kappa):
-    #     """ calculate labor that maximizes profits """
-    #     par = self.par
-    #     return ((1 - par.eta) * kappa / par.w)**(1 / par.eta)
     
     def optimal_labor(self, kappa):
         """ calculate labor that maximizes profits """
@@ -53,10 +42,6 @@ class SalonModel():
         l = ((1 - par.eta) * kappa / par.w)**(1 / par.eta)
         return np.where(l >= 0, l, 0) #ensure that labor is never negative
 
-    # def labor_policy(self, l_star, l_prev, Delta):
-    #     """ Compute labor for the current time period given policy """
-    #     return np.where(abs(l_prev - l_star) > Delta, l_star, l_prev)
-    
     def labor_policy(self, l_star, l_prev, Delta):
         """ Compute labor for the current time period given policy """
         l = np.where(abs(l_prev - l_star) > Delta, l_star, l_prev)
@@ -87,15 +72,6 @@ class SalonModel():
         # compute value
         h = discounts * (sol.kappa * sol.labor**(1 - par.eta) - par.w * sol.labor - par.iota * adjustment_costs)
         return np.mean(h.sum(axis=1))  # sum over time for each series, then average
-
-    # def salon_value(self):
-    #     """ calculate the salon value """
-    #     par = self.par
-    #     sol = self.sol
-    #     h = np.zeros(par.K)
-    #     for t in range(120):
-    #         h += par.R**(-t) * (sol.kappa[:, t] * sol.labor[:, t]**(1 - par.eta) - par.w * sol.labor[:, t] - par.iota * (sol.labor[:, t] != sol.labor[:, t-1]))
-    #     return np.mean(h)
 
     def calculate_H(self, Delta):
         """ calculate H """
