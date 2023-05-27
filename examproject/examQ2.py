@@ -8,7 +8,7 @@ class SalonModel():
         
     def __init__(self):
         """ setup model """
-        np.random.seed(1986)
+
         # a. create namespaces
         par = self.par = SimpleNamespace()
         sol = self.sol = SimpleNamespace()
