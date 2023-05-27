@@ -1,6 +1,6 @@
 # Model analysis project
 
-Our project is titled **Cournot-Stackelberg Model** and is about.
+Our project is titled **Cournot-Stackelberg Model** and is about to compare the two models.
 
 The **results** of the project can be seen from running [modelproject.ipynb](modelproject.ipynb).
 
