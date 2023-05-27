@@ -8,8 +8,7 @@ class SalonModel():
         
     def __init__(self):
         """ setup model """
-
-        np.random.seed(500)
+        np.random.seed(1986)
         # a. create namespaces
         par = self.par = SimpleNamespace()
         sol = self.sol = SimpleNamespace()
@@ -106,24 +105,17 @@ class SalonModel():
 
         return optimal_delta 
     
-
     #DIFFERENT THRESHOLDS
     def adjustment_cost(self, l, l_prev):
         """ Calculate adjustment cost based on labor difference """
         par = self.par
-        threshold = 0.5  # Adjust this value as needed
+        threshold = 0.5  
         adjustment = abs(l - l_prev)
     
         # Step function: cost is zero up to threshold, then jumps to fixed level
         cost = np.where(adjustment > threshold, par.iota, 0)
 
         return cost
-
-    #FIRST TRY
-    # def adjustment_cost(self, l, l_prev):
-    #     """ Calculate adjustment cost based on labor difference """
-    #     par = self.par
-    #     return par.iota * abs(l - l_prev)
 
     def salon_value_adjusted(self):
         """ calculate the salon value """
@@ -143,5 +135,23 @@ class SalonModel():
 
     def calculate_H_adjusted(self, Delta):
         """ calculate H """
-        self.shock_series(Delta) #Generate a series of demand shocks. 
-        return self.salon_value_adjusted() #Calculate the value of the salon over all the generated shock series.
+        self.shock_series(Delta) # Generate a series of demand shocks. 
+        return self.salon_value_adjusted() # Calculate the value of the salon when adjustment cost is defined instead of a fixed cost over all the generated shock series.
+    
+    def optimal_delta_adjusted(self):
+        """ find the optimal Delta that maximizes H """
+    
+        # a. define objective function
+        objective = lambda Delta: -self.calculate_H_adjusted(Delta) #maximizing H given Delta
+    
+        # b. choose bounds for Delta
+        bounds = (0.0, 1.0)  
+    
+        # c. optimize
+        result = optimize.minimize_scalar(objective, bounds=bounds, method='bounded')
+    
+        # d. save and return results
+        optimal_delta = result.x
+        self.optimal_delta = optimal_delta
+
+        return optimal_delta 
